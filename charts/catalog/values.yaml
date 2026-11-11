@@ -62,9 +62,10 @@ existingSecret: ""
 
 # Чутливі параметри -> Secret. Тут лише навчальні значення!
 # Реальні значення передаються через --set під час встановлення.
+# У Git паролів немає: або existingSecret, або --set secret.dbPassword=...
 secret:
-  dbPassword: "dev-password"
-  apiSecretKey: "dev-api-key"
+  dbPassword: ""
+  apiSecretKey: ""
 
 ingress:
   enabled: false

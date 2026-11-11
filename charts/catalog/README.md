@@ -55,8 +55,8 @@ helm/catalog/
 | `config.actuatorExposure` | `health,info,metrics,prometheus` | — | `MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE` |
 | `config.healthProbesEnabled` | `"true"` | — | `MANAGEMENT_ENDPOINT_HEALTH_PROBES_ENABLED` |
 | `config.rabbitHealthEnabled` | `"false"` | — | `MANAGEMENT_HEALTH_RABBIT_ENABLED` |
-| `secret.dbPassword` | `dev-password` | `CHANGE_ME` (через `--set`) | `DB_PASSWORD` у Secret |
-| `secret.apiSecretKey` | `dev-api-key` | `CHANGE_ME` (через `--set`) | `API_SECRET_KEY` у Secret |
+| `secret.dbPassword` | `""` (через `existingSecret` або `--set`) | `CHANGE_ME` (через `--set`) | `DB_PASSWORD` у Secret |
+| `secret.apiSecretKey` | `""` (через `existingSecret` або `--set`) | `CHANGE_ME` (через `--set`) | `API_SECRET_KEY` у Secret |
 | `ingress.enabled` | `false` | `true` | Чи створювати Ingress |
 | `ingress.className` / `host` / `path` | `nginx` / `catalog.local` / `/` | — | Параметри Ingress |
 | `persistence.enabled` | `true` | — | Чи створювати PVC |
