@@ -1,5 +1,8 @@
 replicaCount: 2
 
+# зламане оновлення стає Degraded через 2 хв, а не через 10
+progressDeadlineSeconds: 120
+
 image:
   repository: ghcr.io/luuuda/catalog
   tag: "1.1.0"

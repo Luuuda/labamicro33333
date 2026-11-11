@@ -12,6 +12,10 @@ image:
 nameOverride: ""
 fullnameOverride: ""
 
+# Скільки секунд Kubernetes чекає на успішне оновлення,
+# після чого Deployment (і застосунок в Argo CD) стає Degraded
+progressDeadlineSeconds: 600
+
 strategy:
   maxSurge: 1
   maxUnavailable: 0
