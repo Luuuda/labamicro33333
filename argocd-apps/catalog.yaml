@@ -1,0 +1,22 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: catalog
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/Luuuda/labamicro33333.git
+    targetRevision: main
+    path: charts/catalog
+    helm:
+      valueFiles:
+        - values-minikube.yaml        # шлях відносно каталогу чарту
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: pipay
+  syncPolicy:
+    automated:
+      prune: true                     # selfHeal додамо в п. 6
+    syncOptions:
+      - CreateNamespace=true

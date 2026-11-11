@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: catalog-config
+  namespace: pipay
+  labels:
+    app: catalog
+data:
+  CATALOG_GREETING: "Привіт з Kubernetes кластера Minikube!"
+  CATALOG_FEATURE_FLAG_NEW_SEARCH: "true"
+  INFO_APP_ENVIRONMENT: "k8s-minikube"
+  MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: "health,info,metrics,prometheus"
+  MANAGEMENT_ENDPOINT_HEALTH_PROBES_ENABLED: "true"
+  MANAGEMENT_HEALTH_RABBIT_ENABLED: "false"

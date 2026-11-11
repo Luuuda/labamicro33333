@@ -1,0 +1,45 @@
+{{- if .Values.hooks.preUpgrade.enabled }}
+# Хук pre-upgrade: перед кожним оновленням перевіряє, що поточна версія
+# застосунку відповідає, і виводить її. Якщо перевірка не пройде — upgrade зупиниться.
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "catalog.fullname" . }}-pre-upgrade
+  labels:
+    {{- include "catalog.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": pre-upgrade
+    "helm.sh/hook-weight": "0"
+    "helm.sh/hook-delete-policy": before-hook-creation
+spec:
+  backoffLimit: 1
+  activeDeadlineSeconds: 120
+  # Job і його под видаляються автоматично через 2 хв після завершення
+  ttlSecondsAfterFinished: 120
+  template:
+    metadata:
+      labels:
+        {{- include "catalog.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: pre-upgrade-hook
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: pre-upgrade
+          image: {{ .Values.hooks.preUpgrade.image }}
+          command:
+            - sh
+            - -c
+            - |
+              echo "[pre-upgrade] release={{ .Release.Name }} revision={{ .Release.Revision }} target tag={{ include "catalog.imageTag" . }}"
+              echo "[pre-upgrade] current version of the running app:"
+              wget -qO- http://{{ include "catalog.fullname" . }}:{{ .Values.service.port }}/api/v1/catalog/config
+              echo
+              echo "[pre-upgrade] check OK, upgrade can continue"
+          resources:
+            requests:
+              cpu: 10m
+              memory: 16Mi
+            limits:
+              cpu: 100m
+              memory: 64Mi
+{{- end }}

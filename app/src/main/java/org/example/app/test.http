@@ -1,0 +1,142 @@
+@gateway = http://localhost:8080
+@configserver = http://localhost:8888
+
+
+### 0. Health-check
+GET {{gateway}}/actuator/health
+
+### 1. Логін БЕЗ токена (має дати 401 на захищених)
+GET {{gateway}}/api/v1/catalog/restaurants
+
+### 2. Отримати JWT токен
+POST {{gateway}}/auth/login
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "password"
+}
+
+> {%
+    client.global.set("token", response.body.token);
+%}
+
+### 3. Створити ресторан З токеном
+POST {{gateway}}/api/v1/catalog/restaurants
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "Kyiv Food Point",
+  "description": "Смачна українська кухня",
+  "address": "вул. Хрещатик, 1"
+}
+
+> {%
+    client.global.set("restaurantId", response.body.id);
+%}
+
+### 4. Додати відгук
+POST {{gateway}}/api/v1/reviews
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "restaurantId": "{{restaurantId}}",
+  "authorName": "Людмила",
+  "rating": 5,
+  "comment": "Дуже смачно!"
+}
+
+### 5. Композиція з токеном
+GET {{gateway}}/api/v1/composition/restaurants/{{restaurantId}}/details
+Authorization: Bearer {{token}}
+
+### 6. ПОГАНИЙ токен (демо security)
+GET {{gateway}}/api/v1/composition/restaurants/{{restaurantId}}/details
+Authorization: Bearer this.is.invalid.token
+
+### 7. БЕЗ токена (демо security)
+GET {{gateway}}/api/v1/composition/restaurants/{{restaurantId}}/details
+
+### 8. Метрики gateway (raw)
+GET {{gateway}}/actuator/prometheus
+
+### 9. Health всіх сервісів
+GET http://localhost:8081/actuator/health
+
+###
+GET http://localhost:8082/actuator/health
+
+
+### ============================
+### ЛАБА 8 — Configuration Management
+### ============================
+
+### --- 1. Перевірка Config Server напряму ---
+
+### 10. Health Config Server
+GET {{configserver}}/actuator/health
+
+### 11. Конфіг для catalog (default profile)
+GET {{configserver}}/catalog/default
+
+### 12. Конфіг для catalog (dev profile) — має бути merged з catalog.yml + catalog-dev.yml
+GET {{configserver}}/catalog/dev
+
+### 13. Конфіг для catalog (prod profile)
+GET {{configserver}}/catalog/prod
+
+### 14. Конфіг для reviews (dev profile)
+GET {{configserver}}/reviews/dev
+
+### 15. Конфіг для gateway (dev profile)
+GET {{configserver}}/gateway/dev
+
+
+### --- 2. Шифрування секретів ---
+
+### 16. Зашифрувати JWT секрет
+POST {{configserver}}/encrypt
+Content-Type: text/plain
+
+mySuperSecretKeyForJWTTokenGenerationAtLeast256BitsLong!!
+
+### 17. Розшифрувати назад (для перевірки)
+POST {{configserver}}/decrypt
+Content-Type: text/plain
+
+b534a29224651a008e71cadf4382e0e650fe7cc5eb73a8bc86d7c55f02ec153627957567ee93de1dfcf21217d5d8732966db524660a46b4197f90271d7fd57b44bdc3b39fb4d90f724b3191599b80039
+
+
+### --- 3. Демо Profile (різні налаштування) ---
+
+### 18. Поточні значення параметрів catalog (через сам сервіс)
+GET http://localhost:8081/api/v1/catalog/config
+
+
+### --- 4. Hot-reload (Refresh без рестарту) ---
+
+### 19. Refresh catalog — перечитати конфіги
+POST http://localhost:8081/actuator/refresh
+
+### 20. Знов перевірка значень — мають бути новими
+GET http://localhost:8081/api/v1/catalog/config
+
+### 21. Refresh gateway
+POST {{gateway}}/actuator/refresh
+
+### 22. Refresh reviews
+POST http://localhost:8082/actuator/refresh
+
+
+### --- 5. Демо Secrets Management ---
+
+### 23. Перевірка file-separation секретів
+GET {{gateway}}/admin/secrets-info
+
+### 24. Подивитись поточні env-параметри gateway (там можна знайти JWT, але замаскований)
+GET {{gateway}}/actuator/env
+
+### 25. Подивитись конкретно admin.api-key (з gateway-secrets.yml)
+GET {{gateway}}/actuator/env/admin.api-key

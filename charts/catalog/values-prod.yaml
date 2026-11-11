@@ -1,0 +1,28 @@
+# Продакшн-середовище
+replicaCount: 3
+
+image:
+  tag: "1.1.0"
+
+resources:
+  requests:
+    cpu: 200m
+    memory: 384Mi
+  limits:
+    cpu: 1000m
+    memory: 768Mi
+
+config:
+  greeting: "Привіт з Helm-чарта (prod)!"
+  featureFlagNewSearch: "true"
+  environment: "prod"
+
+# Пароль у файлі не зберігається — передавати через
+#   --set secret.dbPassword=... --set secret.apiSecretKey=...
+secret:
+  dbPassword: "CHANGE_ME"
+  apiSecretKey: "CHANGE_ME"
+
+ingress:
+  enabled: true
+  host: catalog.local

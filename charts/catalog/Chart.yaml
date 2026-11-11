@@ -1,0 +1,8 @@
+apiVersion: v2
+name: catalog
+description: Helm-чарт мікросервісу catalog проєкту Pipay (Spring Boot)
+type: application
+version: 0.2.0
+appVersion: "1.0.0"
+maintainers:
+  - name: Pipay

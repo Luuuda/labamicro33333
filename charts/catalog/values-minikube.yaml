@@ -1,0 +1,33 @@
+# Значення для середовища minikube під керуванням Argo CD (ЛР5).
+# Зміни в цьому файлі (тег образу, репліки...) комітяться в Git,
+# а Argo CD сам приводить кластер до цього стану.
+
+replicaCount: 2
+
+image:
+  repository: ghcr.io/luuuda/catalog
+  tag: "1.0.0"
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 8080
+
+config:
+  greeting: "Привіт з Argo CD!"
+  featureFlagNewSearch: "true"
+  environment: "minikube-gitops"
+
+# Secret створюється вручну (kubectl create secret), у Git паролів немає
+existingSecret: catalog-secret
+
+ingress:
+  enabled: false
+
+# Helm-хуки і helm test з ЛР4 вимкнено: Argo CD перетворює pre-upgrade
+# на PreSync-хук, який запускався б і при першому розгортанні
+hooks:
+  preUpgrade:
+    enabled: false
+tests:
+  enabled: false

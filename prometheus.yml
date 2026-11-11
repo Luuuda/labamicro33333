@@ -1,0 +1,28 @@
+global:
+  scrape_interval: 5s
+
+scrape_configs:
+  - job_name: 'gateway'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['gateway:8080']
+
+  - job_name: 'catalog'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['catalog:8080']
+
+  - job_name: 'reviews'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['reviews:8080']
+
+  - job_name: 'users'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['users:8080']
+
+  - job_name: 'app'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['app:8080']

@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: gateway
+  config:
+    import: "optional:configserver:http://config-server:8888"
+  profiles:
+    active: dev,secrets
+  cloud:
+    gateway:
+      routes:
+        - id: catalog-service
+          uri: http://catalog:8080
+          predicates:
+            - Path=/api/v1/catalog/**
+        - id: users-service
+          uri: http://users:8080
+          predicates:
+            - Path=/api/v1/users/**
+        - id: reviews-service
+          uri: http://reviews:8080
+          predicates:
+            - Path=/api/v1/reviews/**
