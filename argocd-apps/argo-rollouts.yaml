@@ -1,0 +1,27 @@
+# Контролер Argo Rollouts встановлюється з Git через Argo CD,
+# так само як і застосунок (App of Apps: root підхоплює цей файл сам).
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: argo-rollouts
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://argoproj.github.io/argo-helm   # офіційний Helm-репозиторій Argo
+    chart: argo-rollouts
+    targetRevision: "2.*"                           # остання версія чарту 2.x
+    helm:
+      valuesObject:
+        dashboard:
+          enabled: true                             # веб-дашборд Rollouts
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argo-rollouts
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true                        # великі CRD Rollouts
