@@ -10,7 +10,7 @@ progressDeadlineSeconds: 120
 
 image:
   repository: ghcr.io/luuuda/catalog
-  tag: "1.3.0"
+  tag: "1.2.0"
   pullPolicy: IfNotPresent
 
 service:
