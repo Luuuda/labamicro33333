@@ -1,0 +1,25 @@
+{{- if .Values.rollout.enabled }}
+# Argo Rollouts: замінює Deployment, коли rollout.enabled=true.
+# Оновлення йде поступово за кроками з values (rollout.canary.steps).
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: {{ include "catalog.fullname" . }}
+  labels:
+    {{- include "catalog.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  revisionHistoryLimit: 10
+  progressDeadlineSeconds: {{ .Values.progressDeadlineSeconds }}
+  selector:
+    matchLabels:
+      {{- include "catalog.selectorLabels" . | nindent 6 }}
+  template:
+    {{- include "catalog.podTemplate" . | nindent 4 }}
+  strategy:
+    canary:
+      maxSurge: {{ .Values.rollout.canary.maxSurge | quote }}
+      maxUnavailable: {{ .Values.rollout.canary.maxUnavailable }}
+      steps:
+        {{- toYaml .Values.rollout.canary.steps | nindent 8 }}
+{{- end }}

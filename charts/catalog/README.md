@@ -105,3 +105,13 @@ helm uninstall pipay -n pipay
 ```bash
 kubectl get secrets -n pipay -l owner=helm
 ```
+
+## Argo Rollouts (ЛР6)
+
+| Параметр | За замовчуванням | minikube | Опис |
+| :--- | :--- | :--- | :--- |
+| `rollout.enabled` | `false` | `true` | Створювати `Rollout` замість `Deployment` |
+| `rollout.canary.maxSurge` / `maxUnavailable` | `25%` / `0` | — | Скільки подів можна додати / забрати на кожному кроці |
+| `rollout.canary.steps` | 25% → ручна пауза → 50% → 30 с → 75% → 30 с | — | Кроки canary-релізу |
+
+Шаблон пода винесено в `templates/_podtemplate.tpl`, тому `Deployment` і `Rollout` описують однаковий контейнер.

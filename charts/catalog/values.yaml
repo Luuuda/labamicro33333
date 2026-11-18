@@ -20,6 +20,21 @@ strategy:
   maxSurge: 1
   maxUnavailable: 0
 
+# Argo Rollouts (ЛР6): якщо enabled — замість Deployment створюється Rollout
+rollout:
+  enabled: false
+  canary:
+    maxSurge: "25%"
+    maxUnavailable: 0
+    # частка нової версії = частка її подів серед усіх реплік
+    steps:
+      - setWeight: 25
+      - pause: {}              # ручна пауза: чекає kubectl argo rollouts promote
+      - setWeight: 50
+      - pause: {duration: 30s}
+      - setWeight: 75
+      - pause: {duration: 30s}
+
 containerPort: 8080
 
 service:

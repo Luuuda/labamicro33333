@@ -1,4 +1,9 @@
-replicaCount: 2
+# не менше 4 реплік, щоб було видно співвідношення версій (25/50/75%)
+replicaCount: 4
+
+# ЛР6: поступовий реліз через Argo Rollouts (canary, кроки — у values.yaml)
+rollout:
+  enabled: true
 
 # зламане оновлення стає Degraded через 2 хв, а не через 10
 progressDeadlineSeconds: 120
