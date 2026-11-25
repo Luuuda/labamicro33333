@@ -1,0 +1,14 @@
+# ЛР8: локальне AWS-середовище LocalStack.
+# Токен береться зі змінної оточення LOCALSTACK_AUTH_TOKEN (безкоштовний акаунт на app.localstack.cloud).
+services:
+  localstack:
+    image: localstack/localstack:latest
+    container_name: localstack
+    ports:
+      - "4566:4566"            # єдина точка входу для всіх AWS API
+    environment:
+      - LOCALSTACK_AUTH_TOKEN=${LOCALSTACK_AUTH_TOKEN}
+      - SERVICES=lambda,dynamodb,apigateway,iam,logs,sts
+      - DEBUG=0
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"   # Lambda запускається в окремих контейнерах

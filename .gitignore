@@ -40,3 +40,7 @@ build/
 *.docx
 
 .tmp-*
+
+# LR8
+lab8/.api-url
+lab8/.build/
