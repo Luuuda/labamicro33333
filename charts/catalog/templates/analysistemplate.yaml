@@ -1,0 +1,25 @@
+{{- if .Values.rollout.analysis.enabled }}
+{{- $sel := .Values.rollout.analysis.selector }}
+# ЛР7: аналіз для Argo Rollouts. 4 виміри з інтервалом 30 с;
+# якщо частка успішних (не 5xx) запитів < 95% хоча б двічі — реліз скасовується.
+apiVersion: argoproj.io/v1alpha1
+kind: AnalysisTemplate
+metadata:
+  name: {{ include "catalog.fullname" . }}-success-rate
+  labels:
+    {{- include "catalog.labels" . | nindent 4 }}
+spec:
+  metrics:
+    - name: success-rate
+      interval: 30s
+      count: 4
+      failureLimit: 1
+      successCondition: result[0] >= 0.95
+      provider:
+        prometheus:
+          address: {{ .Values.rollout.analysis.prometheusAddress }}
+          query: |
+            sum(rate(http_server_requests_seconds_count{ {{- $sel -}},status!~"5.."}[1m]))
+            /
+            sum(rate(http_server_requests_seconds_count{ {{- $sel -}} }[1m]))
+{{- end }}

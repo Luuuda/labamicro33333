@@ -1,0 +1,13 @@
+{{- if .Values.metrics.enabled }}
+# ЛР7: дашборд Grafana з Git. Sidecar Grafana шукає ConfigMap-и
+# з міткою grafana_dashboard: "1" в усіх namespace і завантажує JSON.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "catalog.fullname" . }}-dashboard
+  labels:
+    grafana_dashboard: "1"
+data:
+  catalog.json: |-
+{{ .Files.Get "dashboards/catalog.json" | indent 4 }}
+{{- end }}

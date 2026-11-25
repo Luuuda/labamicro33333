@@ -20,6 +20,10 @@ spec:
       ports:
         - name: http
           containerPort: {{ .Values.containerPort }}
+      {{- with .Values.env }}
+      env:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       envFrom:
         - configMapRef:
             name: {{ include "catalog.fullname" . }}-config

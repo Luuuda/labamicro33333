@@ -11,3 +11,6 @@ data:
   MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: {{ .Values.config.actuatorExposure | quote }}
   MANAGEMENT_ENDPOINT_HEALTH_PROBES_ENABLED: {{ .Values.config.healthProbesEnabled | quote }}
   MANAGEMENT_HEALTH_RABBIT_ENABLED: {{ .Values.config.rabbitHealthEnabled | quote }}
+  # ЛР7: гістограма затримок для p95 і JSON-логи (лише повідомлення, без префікса logback)
+  MANAGEMENT_METRICS_DISTRIBUTION_PERCENTILES_HISTOGRAM_HTTP_SERVER_REQUESTS: "true"
+  LOGGING_PATTERN_CONSOLE: {{ .Values.config.logPattern | quote }}

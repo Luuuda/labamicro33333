@@ -20,16 +20,19 @@ strategy:
   maxSurge: 1
   maxUnavailable: 0
 
-# Argo Rollouts (ЛР6): якщо enabled — замість Deployment створюється Rollout
 rollout:
   enabled: false
+  # ЛР7: автоматичний аналіз релізу за метриками Prometheus
+  analysis:
+    enabled: false
+    prometheusAddress: http://kps-prometheus.monitoring:9090
+    selector: 'namespace="default"'
   canary:
     maxSurge: "25%"
     maxUnavailable: 0
-    # частка нової версії = частка її подів серед усіх реплік
     steps:
       - setWeight: 25
-      - pause: {}              # ручна пауза: чекає kubectl argo rollouts promote
+      - pause: {}
       - setWeight: 50
       - pause: {duration: 30s}
       - setWeight: 75
@@ -40,8 +43,6 @@ containerPort: 8080
 service:
   type: NodePort
   port: 8080
-  # порожньо — Kubernetes призначить nodePort автоматично
-  # (так чарт можна встановити двічі в один кластер)
   nodePort: ""
 
 resources:
@@ -74,6 +75,17 @@ config:
   actuatorExposure: "health,info,metrics,prometheus"
   healthProbesEnabled: "true"
   rabbitHealthEnabled: "false"
+  # ЛР7: у stdout — лише текст повідомлення (JSON-рядок запиту)
+  logPattern: "%m%n"
+
+# ЛР7: додаткові змінні оточення контейнера (наприклад FAIL_RATE)
+env: []
+
+# ЛР7: метрики для Prometheus
+metrics:
+  enabled: false
+  path: /actuator/prometheus
+  alerts: false
 
 # Якщо задано — Secret з чарта не створюється, а Deployment бере
 # вже існуючий Secret з цим ім'ям (створений вручну, поза Git).

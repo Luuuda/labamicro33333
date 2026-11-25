@@ -1,0 +1,18 @@
+{{- if .Values.metrics.enabled }}
+# ЛР7: Prometheus (kube-prometheus-stack) знаходить Service за мітками
+# і кожні 15 с забирає метрики з /actuator/prometheus з кожного пода.
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "catalog.fullname" . }}
+  labels:
+    {{- include "catalog.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "catalog.selectorLabels" . | nindent 6 }}
+  endpoints:
+    - port: http
+      path: {{ .Values.metrics.path | default "/metrics" }}
+      interval: 15s
+{{- end }}
