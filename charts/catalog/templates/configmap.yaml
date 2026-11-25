@@ -12,5 +12,6 @@ data:
   MANAGEMENT_ENDPOINT_HEALTH_PROBES_ENABLED: {{ .Values.config.healthProbesEnabled | quote }}
   MANAGEMENT_HEALTH_RABBIT_ENABLED: {{ .Values.config.rabbitHealthEnabled | quote }}
   # ЛР7: гістограма затримок для p95 і JSON-логи (лише повідомлення, без префікса logback)
-  MANAGEMENT_METRICS_DISTRIBUTION_PERCENTILES_HISTOGRAM_HTTP_SERVER_REQUESTS: "true"
+  # (через JSON, бо змінна оточення з підкресленнями розбирається Spring неоднозначно)
+  SPRING_APPLICATION_JSON: '{"management":{"metrics":{"distribution":{"percentiles-histogram":{"http.server.requests":true}}}}}'
   LOGGING_PATTERN_CONSOLE: {{ .Values.config.logPattern | quote }}
